@@ -100,6 +100,31 @@ public class MatchCards {
             boardPanel.add(tile);
         }
         frame.add(boardPanel);
+        restartButton.setFont(new Font("Arial", Font.PLAIN, 16));
+        restartButton.setText("Restart Game");
+        restartButton.setPreferredSize(new Dimension(boardWidth, 30));
+        restartButton.setFocusable(false);
+        restartButton.setEnabled(false);
+        restartButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                if (!gameReady) {
+                    return;
+                }
+                gameReady = false;
+                restartButton.setEnabled(false);
+                card1Selected = null;
+                card2Selected = null;
+                shuffleCards();
+
+                for (int i = 0; i < board.size(); i++) {
+                    board.get(i).setIcon(cardSet.get(i).cardImageIcon);
+                }
+                errorCount = 0;
+                textLabel.setText("Errors: " + Integer.toString(errorCount));
+                hideCardTimer.start();
+            }
+        });
     }
 
     void setupCards() {
@@ -122,6 +147,20 @@ public class MatchCards {
             Card temp = cardSet.get(i);
             cardSet.set(i, cardSet.get(j));
             cardSet.set(j, temp);
+        }
+    }
+    void hideCards() {
+        if (gameReady && card1Selected != null && card2Selected != null) {
+            card1Selected.setIcon(cardBackImageIcon);
+            card1Selected = null;
+            card2Selected.setIcon(cardBackImageIcon);
+            card2Selected = null;
+        } else {
+            for (int i = 0; i < board.size(); i++) {
+                board.get(i).setIcon(cardBackImageIcon);
+            }
+            gameReady = true;
+            restartButton.setEnabled(true);
         }
     }
 }
